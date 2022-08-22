@@ -1,0 +1,65 @@
+import re
+
+def regist():
+  regex = r'\b[a-zA-z]{1}[a-zA-Z0-9.+_-]+@[a-z]+\.[a-z|A-Z]{2,}\b'
+  r = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$"
+  def checkmail(email):
+    if (re.fullmatch(regex,email)):
+      return True
+    else:
+      print("Enter Valid email Address")
+
+  def pwdcheck(pwd):
+    if (re.fullmatch(r,pwd)):
+      return True
+    else:
+      print("Your Password must contain a uppercase,lowercase,numbers and a special characters")
+
+  email = input('Enter the emailid')
+  pwd = input('Enter the password')
+
+
+  if checkmail(email) and pwdcheck(pwd):
+    d = {email:pwd}
+    f = open("demo.txt","a")
+    f.writelines(f'\n{email}:{pwd}')
+    f.close()
+def login():
+  email = input('Enter the emailid')
+  pwd = input('Enter the password')
+  tst = open("demo.txt","r")
+  test = tst.read()
+  with open("demo.txt",'r') as fr:
+    lines = fr.readlines()
+  if email in test:
+    for i in lines:
+      lst = i.split(':')
+      if lst[0] == email and lst[1].strip('\n') == pwd:
+        print("User Exist")
+      elif lst[0] == email and lst[1].strip('\n') != pwd:
+        print("Enter valid password")
+  else:
+    print('Enter Valid Email Address or Register')
+def cngpwd():
+  email = input('Enter mail ID')
+  tst = open("demo.txt","r")
+  test = tst.read()
+  with open("demo.txt",'r') as fr:
+    lines = fr.readlines()
+  if email in test:
+    new = input("Enter new password")
+    for i in lines:
+      lst = i.split(':')
+      if lst[0] == email:
+        up = lst[0]+':'+new
+        f = open("demo.txt","a")
+        f.writelines(f'\n{up}')
+        f.close()
+print("1. Register \n 2. Login \n 3. Change Password")
+c= int(input('Enter your choice'))
+if c ==1:
+  regist()
+elif c==2:
+  login()
+elif c == 3:
+  cngpwd()
