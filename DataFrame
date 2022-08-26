@@ -1,0 +1,93 @@
+###### Assessment
+
+###### I am going to provide two .csv files , you are supposed to work on them and have to provide solutions to the following problems
+
+###### import necessary libraries
+
+import numpy as np
+import pandas as pd
+import plotly.express as px
+
+###### merge those two csv files (after getting as dataframes, get them as a single dataframe)
+
+a = pd.read_csv('/content/college_1.csv')
+b = pd.DataFrame(a)
+b.head(5)
+c = pd.read_csv('/content/college_2.csv')
+d = pd.DataFrame(c)
+frames = [b,d]
+df = pd.concat(frames)
+df.head(2)
+
+
+###### Take each csv file , split that csv file into multiple categories (example csv files are added in the repo) 
+
+
+###### consider if the codekata score exceeds 15000 points(present week) then make a csv on those observations as Exceeded expectations.csv
+
+
+###### if  10000<codekata score<15000   (Reached_expectations.csv)
+
+
+
+###### if  7000<codekata score<10000   (Needs_Improvement.csv)
+
+
+###### if  codekate score < 7000        (Unsatisfactory.csv)
+
+df1 = df[df['CodeKata Score'] > 15000]
+df1.to_csv('Exceeded expectations.csv')
+
+df2 = df[(df['CodeKata Score'] > 10000) & (df['CodeKata Score'] < 15000)]
+df2.to_csv('Reached_expectations.csv')
+
+df3 = df[(df['CodeKata Score'] > 7000) & (df['CodeKata Score'] < 10000)]
+df3.to_csv('Needs_Improvement.csv')
+
+df4 = df[(df['CodeKata Score'] < 7000)]
+df4.to_csv('Unsatisfactory.csv')
+
+###### Average of previous week geekions vs this week geekions (i.e Previous Geekions vs CodeKata Score)
+
+avg_prev_week = df['Previous Geekions'].mean()
+avg_prev_week
+avg_pres_week = df['CodeKata Score'].mean()
+print(avg_prev_week,avg_pres_week)
+
+###### No of students participated 
+
+number_of_students = df['Name'].count()
+number_of_students
+
+###### #Average completion of python course or my_sql or python english or computational thinking
+
+avg_python = df['python'].mean()
+avg_python
+
+###### rising star of the week (top 3 candidate who performed well in that particular week)
+
+rising_star = df.nlargest(3,"CodeKata Score")
+rising_star
+
+###### Shining stars of the week (top 3 candidates who has highest geekions)
+
+top3 = df.nlargest(3,"Previous Geekions")
+top3
+
+###### Department wise codekata performence (pie chart)
+
+fig = px.pie(df,values = "CodeKata Score",names="Department",title = 'Department wise codekata performence')
+fig.show()
+
+###### Department wise toppers (horizantal bar graph or any visual representations of your choice)
+
+df['Rank'] = df.groupby('Department')['CodeKata Score'].rank('dense',ascending=False)
+df1 = df[df['Rank'] == 1.0]
+
+
+import plotly.express as px
+fig = px.bar(df1, x='Department', y='Rank')
+fig.show()
+
+df1
+
