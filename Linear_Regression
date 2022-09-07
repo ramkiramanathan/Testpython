@@ -1,0 +1,236 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn import linear_model
+
+ground_cricket_data = {"Chirps/Second": [20.0, 16.0, 19.8, 18.4, 17.1, 15.5, 14.7,
+                                         15.7, 15.4, 16.3, 15.0, 17.2, 16.0, 17.0,
+                                         14.4],
+                       "Ground Temperature": [88.6, 71.6, 93.3, 84.3, 80.6, 75.2, 69.7,
+                                              71.6, 69.4, 83.3, 79.6, 82.6, 80.6, 83.5,
+                                              76.3]}
+df = pd.DataFrame(ground_cricket_data)
+
+1. Find the linear regression equation for this data.
+
+df
+
+iqr = df['Chirps/Second'].quantile(0.75) - df['Chirps/Second'].quantile(0.25)
+iqr
+ut = df['Chirps/Second'].quantile(0.75) + 1.5*iqr
+lt = df['Chirps/Second'].quantile(0.25) - 1.5*iqr
+ut,lt
+
+iqr2 = df['Ground Temperature'].quantile(0.75) - df['Ground Temperature'].quantile(0.25)
+iqr
+ut2 = df['Ground Temperature'].quantile(0.75) + 1.5*iqr
+lt2 = df['Ground Temperature'].quantile(0.25) - 1.5*iqr
+ut2,lt2
+
+df.describe()
+
+df.shape
+
+df.drop_duplicates()
+
+df.shape
+
+df.plot(x='Chirps/Second',y= 'Ground Temperature', style= 'o')
+plt.xlabel('Chirps/Second')
+plt.ylabel('Ground Temperature')
+plt.show()
+
+df.corr()
+
+## Splitting
+X = df.loc[:,['Chirps/Second']].values
+Y = df.loc[:,'Ground Temperature'].values
+from sklearn.model_selection import train_test_split
+X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.2)
+
+
+## Scaling
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+scaler.fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+## Modelling
+
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train_scaled,Y_train)
+
+y_pred = regressor.predict(X_test_scaled)
+df1 = pd.DataFrame({'Actual': Y_test, 'Predicted': y_pred})
+df1
+
+
+
+from sklearn import metrics
+print('R2-Score":',metrics.r2_score(Y_test,y_pred))
+
+regressor.predict([[18]])
+
+df
+
+
+
+Assignment6
+
+df2 = pd.read_fwf("/content/brain_body.txt")
+
+df2
+
+df2.describe()
+
+iqr = df2['Brain'].quantile(0.75) - df2['Brain'].quantile(0.25)
+iqr
+ut = df2['Brain'].quantile(0.75) + 1.5*iqr
+lt = df2['Brain'].quantile(0.25) - 1.5*iqr
+ut,lt
+
+sum(df2.Brain > 120)
+
+df2.shape
+
+df2[(df2.Brain > 120)]
+
+df2.dtypes
+
+df2[df2.Brain < df2.Body].count()
+
+newdf = df2[df2.Brain < df2.Body]
+newdf
+
+newdf.drop_duplicates()
+
+newdf.shape
+
+newdf.plot(x='Brain',y='Body',style='o')
+plt.show()
+
+newdf.corr()
+
+newdf[newdf.Brain > 1000]
+
+newdf.drop(18,axis=0,inplace = True)
+
+newdf.plot(x='Brain',y='Body',style='o')
+plt.show()
+
+newdf[newdf.Body > 1200]
+
+iqr = df2['Body'].quantile(0.75) - df2['Body'].quantile(0.25)
+iqr
+ut = df2['Body'].quantile(0.75) + 1.5*iqr
+lt = df2['Body'].quantile(0.25) - 1.5*iqr
+ut,lt
+
+newdf[newdf.Body > 1200] = 408
+
+newdf.plot(x='Brain',y='Body',style='o')
+plt.show()
+
+newdf.corr()
+
+## Splitting
+X = newdf.loc[:,['Brain']].values
+Y = newdf.loc[:,'Body'].values
+from sklearn.model_selection import train_test_split
+X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size = 0.2)
+
+## Scaling
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+scaler.fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+## Modelling
+
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train_scaled,Y_train)
+y_pred = regressor.predict(X_test_scaled)
+
+res = pd.DataFrame({'Actual':Y_test , 'Predicted':y_pred})
+res
+
+from sklearn import metrics
+print('R2- SCORE:', metrics.r2_score(Y_test,y_pred))
+
+Assignment - 7
+
+df = pd.read_fwf("salary.txt", header=None, 
+                 names=["Sex", "Rank", "Year", "Degree", "YSdeg", "Salary"])
+df.head()
+
+df.describe()
+
+df.Year.unique()
+
+df.dtypes
+
+df.shape
+
+df.drop_duplicates()
+
+df.shape
+
+df.plot(x='Sex',y='Salary',style='o')
+plt.show()
+
+df[['Sex','Salary']].corr()
+
+df.plot(x='Rank',y='Salary',style='o')
+plt.show()
+df[['Rank','Salary']].corr()
+
+df.plot(x='Year',y='Salary',style='o')
+plt.show()
+df[['Year','Salary']].corr()
+
+df.plot(x='Degree',y='Salary',style='o')
+plt.show()
+df[['Degree','Salary']].corr()
+
+## No Correlation between Degree and Salary, Hence droping the Degree column.
+df.drop(columns='Degree',axis = 1,inplace = True)
+df.head()
+
+
+df.plot(x='YSdeg',y='Salary',style='o')
+plt.show()
+df[['YSdeg','Salary']].corr()
+
+## Splitting
+from sklearn.model_selection import train_test_split
+X = df.loc[:,["Sex", "Rank", "Year","YSdeg"]].values
+Y = df.loc[:,'Salary'].values
+X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size =0.2)
+
+## Scaling
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+scaler.fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+## Modelling
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train_scaled,Y_train)
+y_pred = regressor.predict(X_test_scaled)
+res = pd.DataFrame({"Actual":Y_test , "Predicted":y_pred})
+res
+
+from sklearn import metrics
+print("R2-score: ", metrics.r2_score(Y_test,y_pred))
+
+print(regressor.coef_)
+
+coeff_df = pd.DataFrame(regressor.coef_,["Sex", "Rank", "Year","YSdeg"], columns=['Coefficient'])
+coeff_df
+
