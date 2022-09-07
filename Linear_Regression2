@@ -1,0 +1,193 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics
+
+df = pd.read_csv('/content/car_data.csv')
+df.head()
+
+df.isnull().sum()
+
+df.shape
+
+df.describe()
+
+s = df.Make.unique()
+s = list(s)
+s
+
+f = pd.get_dummies(df, columns = ['Make'])
+f.head()
+
+df.head()
+
+df.shape
+
+df.drop_duplicates()
+
+df.shape
+
+df.plot(x='Mileage',y='Price',style='o')
+plt.show()
+df[['Mileage','Price']].corr()
+
+df['trans2'] = np.power(df['Mileage'],2)
+df.plot(x='trans2',y='Price',style='o')
+plt.show()
+df[['trans2','Price']].corr()
+
+df['trans2'] = np.power(df['Mileage'],3)
+df.plot(x='trans2',y='Price',style='o')
+plt.show()
+df[['trans2','Price']].corr()
+
+df['trans2'] = np.log(df['Mileage'])
+df.plot(x='trans2',y='Price',style='o')
+plt.show()
+df[['trans2','Price']].corr()
+
+df['trans2'] = np.exp(df['Mileage'])
+df.plot(x='trans2',y='Price',style='o')
+plt.show()
+df[['trans2','Price']].corr()
+
+df['trans2'] = np.power(df['Mileage'],0.5)
+df.plot(x='trans2',y='Price',style='o')
+plt.show()
+df[['trans2','Price']].corr()
+
+## Splitting
+X = df.loc[:,['Mileage']].values
+Y = df.loc[:,'Price'].values
+X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.2)
+
+## Scaling
+scaler = StandardScaler()
+scaler.fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+## Modelling
+regressor = LinearRegression()
+regressor.fit(X_train_scaled,Y_train)
+y_pred = regressor.predict(X_test_scaled)
+res = pd.DataFrame({"Actual":Y_test , "Predicted":y_pred})
+res
+
+## Metrics
+print("R2_Score :", metrics.r2_score(Y_test,y_pred))
+
+c_df = pd.DataFrame(regressor.intercept_,['Mileage'],columns = ['coefficient'])
+c_df
+
+df.head()
+
+s_df = df[['Mileage','Cylinder','Liter','Doors','Cruise','Sound','Leather','Price']]
+s_df.head()
+
+s_df.describe()
+
+s_df.nunique()
+
+s_df.Cylinder.unique()
+
+df.plot(x='Cylinder',y='Price',style='o')
+plt.show()
+df[['Cylinder','Price']].corr()
+
+df.plot(x='Liter',y='Price',style='o')
+plt.show()
+df[['Liter','Price']].corr()
+
+df.plot(x='Doors',y='Price',style='o')
+plt.show()
+df[['Doors','Price']].corr()
+
+s_df['T_Doors'] = np.power(df['Doors'],2)
+s_df.plot(x='T_Doors',y='Price',style='o')
+plt.show()
+s_df[['T_Doors','Price']].corr()
+
+s_df['T_Doors'] = np.power(df['Doors'],3)
+s_df.plot(x='T_Doors',y='Price',style='o')
+plt.show()
+s_df[['T_Doors','Price']].corr()
+
+s_df['T_Doors'] = np.power(df['Doors'],0.5)
+s_df.plot(x='T_Doors',y='Price',style='o')
+plt.show()
+s_df[['T_Doors','Price']].corr()
+
+s_df['T_Doors'] = np.log(df['Doors'])
+s_df.plot(x='T_Doors',y='Price',style='o')
+plt.show()
+s_df[['T_Doors','Price']].corr()
+
+s_df.drop(columns = ['T_Doors','Doors','Mileage'],axis = 1,inplace = True)
+
+s_df.head()
+
+s_df.plot(x= 'Cruise',y='Price',style = 'o')
+plt.show()
+s_df[['Cruise','Price']].corr()
+
+s_df.plot(x= 'Sound',y='Price',style = 'o')
+plt.show()
+s_df[['Sound','Price']].corr()
+
+s_df.plot(x= 'Leather',y='Price',style = 'o')
+plt.show()
+s_df[['Leather','Price']].corr()
+
+s_df['T_Sound'] = np.log(df['Sound'])
+s_df.plot(x='T_Sound',y='Price',style='o')
+plt.show()
+s_df[['T_Sound','Price']].corr()
+
+s_df['T_Sound'] = np.exp(df['Sound'])
+s_df.plot(x='T_Sound',y='Price',style='o')
+plt.show()
+s_df[['T_Sound','Price']].corr()
+
+s_df['T_Sound'] = np.power(df['Sound'],0.5)
+s_df.plot(x='T_Sound',y='Price',style='o')
+plt.show()
+s_df[['T_Sound','Price']].corr()
+
+s_df['T_Sound'] = np.power(df['Sound'],2)
+s_df.plot(x='T_Sound',y='Price',style='o')
+plt.show()
+s_df[['T_Sound','Price']].corr()
+
+s_df['T_Sound'] = np.power(df['Sound'],3)
+s_df.plot(x='T_Sound',y='Price',style='o')
+plt.show()
+s_df[['T_Sound','Price']].corr()
+
+s_df.drop(['T_Sound','Sound','Leather'],axis = 1,inplace = True)
+
+s_df.head()
+
+## Splitting
+X = s_df.loc[:,['Cylinder','Liter','Cruise']].values
+Y = s_df.loc[:,'Price'].values
+X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.2)
+
+## Scaling
+scaler = StandardScaler()
+scaler.fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+## Modelling
+regressor = LinearRegression()
+regressor.fit(X_train_scaled,Y_train)
+y_pred = regressor.predict(X_test_scaled)
+res = pd.DataFrame({"Actual":Y_test , "Predicted":y_pred})
+res
+
+print('R2_Score : ', metrics.r2_score(Y_test,y_pred))
+
